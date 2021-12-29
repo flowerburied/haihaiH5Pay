@@ -6,33 +6,14 @@
       </div>
 
       <div class="field-box-tab" @click="goback">
-        <div class="field-tab-text">嗨嗨充值中心</div>
+        <div class="field-tab-text">申请提现</div>
         <!-- <img class="field-tab-img" src="../../assets/back.png" /> -->
       </div>
 
       <div class="home-box-con">
-        <div class="pay-text">请输入嗨嗨账号</div>
-        <div class="pay-box">
-          <div class="pay-box-input">
-            <van-field
-              :rules="[{ required: true, message: '请填写用户名' }]"
-              v-model="account.id"
-              label-width="56"
-              placeholder="请输入ID"
-              label="嗨嗨ID："
-            />
-          </div>
-          <div class="pay-box-input">
-            <van-field
-              :rules="[{ required: true, message: '请填写用户名' }]"
-              v-model="account.name"
-              label-width="56"
-              placeholder="请输入昵称"
-              label="昵   称："
-            />
-          </div>
-        </div>
-        <div class="pay-text">选择支付方式</div>
+
+
+     <div class="pay-text">选择支付方式</div>
         <div class="pay-box">
           <div class="pay-box-input" @click="changepayType">
             <div class="pay-left">
@@ -55,43 +36,40 @@
             </div>
           </div>
         </div>
-        <div class="pay-text">选择充值面额</div>
 
-        <div class="pay-change-money">
-          <div
-            class="change-money-box"
-            @click="getchange(index)"
-            v-for="(item, index) in changemoney"
-            :key="index"
-            :class="[isget == index ? 'money_border' : '']"
-          >
-            <div class="money-box-con">
-              <div class="box-con-value1">
-                <img class="con-value-img" src="../../assets/pay/04.png" />
-                <!-- <p class="con-value-text"> {{ item.num }}</p> -->
-                <div class="con-value-text">{{ item.num }}</div>
-              </div>
+        
 
-              <div class="box-con-money">￥6.00</div>
-            </div>
 
-            <img
-              v-if="isget == index"
-              class="money-box-isget"
-              src="../../assets/pay/03.png"
+        <div class="pay-text">提现账号</div>
+        <div class="pay-box">
+          <div class="pay-box-input">
+            <van-field
+              :rules="[{ required: true, message: '请填写用户名' }]"
+              v-model="account.id"
+              label-width="56"
+              placeholder="请输入ID"
+              label="嗨嗨ID："
+            />
+          </div>
+          <div class="pay-box-input">
+            <van-field
+              :rules="[{ required: true, message: '请填写用户名' }]"
+              v-model="account.name"
+              label-width="56"
+              placeholder="请输入昵称"
+              label="昵   称："
             />
           </div>
         </div>
-        <div class="pay-textwx">*如有疑问可添加客服微信：haihaiyuyinlefu</div>
 
-        <div class="pay_agreement">
-          <img v-if="true" class="pay_agreement_quan" src="../../assets/pay/04.png" />
-          <img v-if="false" class="pay_agreement_quan" src="../../assets/pay/05.png" />
-          <div class="pay_agreement_text">我已阅读并同意</div>
-          <div class="pay_agreement_link">《用户充值协议》</div>
-        </div>
+   
 
-        <div class="pay-btn" @click="clickpay">确认支付</div>
+  
+
+
+   
+
+        <div class="pay-btn" @click="clickpay">确认申请</div>
 
         <!-- end -->
       </div>
@@ -158,10 +136,9 @@ export default {
     const clickpay = async () => {
       if (fromConfig.account.id && fromConfig.account.name) {
         if (fromConfig.ispayType) {
-         
           clickwxpay();
         } else {
-           clickalipay();
+          clickalipay();
         }
       } else {
         Notify("请输入嗨嗨账号信息");
