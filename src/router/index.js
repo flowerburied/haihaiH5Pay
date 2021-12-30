@@ -8,6 +8,18 @@ const routes = [{
             import ("@/views/payhome/voucherCenter.vue"),
     },
     {
+        path: "/signup",
+        name: "signup",
+        component: () =>
+            import ("@/views/payhome/signup.vue"),
+    },
+    {
+        path: "/core",
+        name: "core",
+        component: () =>
+            import ("@/views/payhome/core.vue"),
+    },
+    {
         path: "/aliPay",
         name: "aliPay",
         component: () =>

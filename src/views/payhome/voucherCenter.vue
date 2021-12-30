@@ -72,7 +72,7 @@
                 <div class="con-value-text">{{ item.num }}</div>
               </div>
 
-              <div class="box-con-money">￥6.00</div>
+              <div class="box-con-money">{{item.money}}</div>
             </div>
 
             <img
@@ -120,10 +120,10 @@ export default {
 
       ispayType: false,
       changemoney: [
-        { num: 0.01, money: "￥6.00" },
         { num: 600, money: "￥6.00" },
-        { num: 600, money: "￥6.00" },
-        { num: 600, money: "￥6.00" },
+        { num: 3000, money: "￥30.00" },
+        { num: 6800, money: "￥68.00" },
+        { num: 11800, money: "￥118.00" },
       ],
     });
     const from = toRefs(fromConfig);
@@ -158,10 +158,9 @@ export default {
     const clickpay = async () => {
       if (fromConfig.account.id && fromConfig.account.name) {
         if (fromConfig.ispayType) {
-         
           clickwxpay();
         } else {
-           clickalipay();
+          clickalipay();
         }
       } else {
         Notify("请输入嗨嗨账号信息");
@@ -181,6 +180,19 @@ export default {
         const { code, data } = res;
         if (code == 0) {
           console.log("data", data);
+          // http://h5pay.haihaixingqiu.com/#/
+          // let redirect_url="http://h5pay.haihaixingqiu.com/#/"
+          let mergeurl =
+            data.mweb_url + "&redirect_url=http://h5pay.haihaixingqiu.com/#/";
+          console.log("mergeurl", mergeurl);
+          let routeData = proxy.$router.resolve({
+            path: "/aliPay",
+            query: {
+              htmlData: mergeurl,
+            },
+          });
+
+          window.open(routeData.href, "_ blank");
         }
       } catch (err) {
         console.log("err", err);
@@ -189,7 +201,7 @@ export default {
     const clickalipay = async () => {
       try {
         let option = {
-          price: fromConfig.changemoney[fromConfig.isget].num,
+          price: fromConfig.changemoney[fromConfig.isget].num/100,
           type: "Android",
           rand_id: fromConfig.account.id,
         };

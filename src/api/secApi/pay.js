@@ -1,6 +1,22 @@
 import axios from '../../utils/request.js'
 
 let pay = {
+    //提现验证
+    login(data) {
+        return axios({
+            url: '/Withdrawal/login',
+            method: 'post',
+            data: data
+        })
+    },
+    //腾讯云短信
+    TencentSendSms(data) {
+        return axios({
+            url: '/Api/TencentSendSms',
+            method: 'post',
+            data: data
+        })
+    },
     // h5 微信支付
     H5WxPay(data) {
         return axios({

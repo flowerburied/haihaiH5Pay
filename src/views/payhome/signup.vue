@@ -6,69 +6,52 @@
       </div>
 
       <div class="field-box-tab" @click="goback">
-        <div class="field-tab-text">申请提现</div>
+        <div class="field-tab-text">登录</div>
         <!-- <img class="field-tab-img" src="../../assets/back.png" /> -->
       </div>
 
       <div class="home-box-con">
-        <div class="pay-text">选择支付方式</div>
-        <div class="pay-box">
-          <div class="pay-box-input" @click="changepayType">
-            <div class="pay-left">
-              <img class="pay-img" src="../../assets/pay/01.png" />
-              <div class="pay-text1">支付宝</div>
-            </div>
-            <div class="pay-right">
-              <img v-if="!ispayType" class="pay-img-quan" src="../../assets/pay/04.png" />
-              <img v-if="ispayType" class="pay-img-quan" src="../../assets/pay/05.png" />
-            </div>
-          </div>
-          <div class="pay-box-input" @click="changepayType">
-            <div class="pay-left">
-              <img class="pay-img" src="../../assets/pay/02.png" />
-              <div class="pay-text1">微信</div>
-            </div>
-            <div class="pay-right">
-              <img v-if="ispayType" class="pay-img-quan" src="../../assets/pay/04.png" />
-              <img v-if="!ispayType" class="pay-img-quan" src="../../assets/pay/05.png" />
-            </div>
-          </div>
-        </div>
-
-        <div class="pay-text">可提现金额  2987.62</div>
-        <div class="pay-box" style="height:44px;">
-          <div class="pay-box-input" >
+        <img class="logo_haihai" src="../../assets/pay/06.png" />
+        <!-- <div class="pay-text">可提现金额  2987.62</div> -->
+        <div class="pay-box" style="height: 88px; margintop: 113px">
+          <!-- <div class="pay-box-input">
             <van-field
-              :rules="[{ required: true, message: '提现金额需为10的倍数' }]"
+              :rules="[{ required: true, message: '请输入用户ID' }]"
               v-model="account.id"
               label-width="56"
-              placeholder="提现金额需为10的倍数"
-              label="提现金额"
+              placeholder="请输入用户ID"
+              label="ID"
             />
-          </div>
-        </div>
-
-        <div class="pay-text">提现账号</div>
-        <div class="pay-box">
+          </div> -->
           <div class="pay-box-input">
             <van-field
-              :rules="[{ required: true, message: '支付宝账号' }]"
-              v-model="account.id"
+              :rules="[{ required: true, message: '请输入绑定的手机号' }]"
+              v-model="account.phone"
               label-width="56"
-              placeholder="支付宝账号"
+              placeholder="请输入绑定的手机号"
+              label="手机号"
             />
           </div>
           <div class="pay-box-input">
             <van-field
-              :rules="[{ required: true, message: '收款人真实姓名' }]"
-              v-model="account.name"
+              :rules="[{ required: true, message: '请输入验证码' }]"
+              v-model="account.code"
               label-width="56"
-              placeholder="收款人真实姓名"
-            />
+              placeholder="请输入验证码"
+              label="验证码"
+            >
+              <template #button>
+                <div v-if="codetimeout" class="signup_btn" @click="getcode">
+                  获取验证码
+                </div>
+                <div v-if="!codetimeout" class="signup_btn">倒计时：{{ numtime }}</div>
+                <!-- <van-button size="small" type="primary">发送验证码</van-button> -->
+              </template>
+            </van-field>
           </div>
         </div>
 
-        <div class="pay-btn" @click="clickpay">确认申请</div>
+        <div class="pay-btn" @click="clickpay">验证登录</div>
 
         <!-- end -->
       </div>
@@ -82,17 +65,21 @@ import { ref, onMounted, getCurrentInstance, reactive, toRefs, nextTick } from "
 import { useRouter } from "vue-router";
 import api from "@/api/api";
 import { Notify } from "vant";
+import { mapMutation } from "vuex";
 export default {
   setup() {
     const fromConfig = reactive({
+      codetimeout: true,
+      numtime: 60,
       // fieldList: [],
       page: 1,
       nomore: 1,
       count: 0,
       isget: 0,
       account: {
-        id: "51976",
-        name: "",
+        id: "",
+        phone: "15251609976",
+        code: "",
       },
 
       ispayType: false,
@@ -133,14 +120,42 @@ export default {
       router.go(-1);
     };
     const clickpay = async () => {
-      if (fromConfig.account.id && fromConfig.account.name) {
-        if (fromConfig.ispayType) {
-          clickwxpay();
-        } else {
-          clickalipay();
+      if (fromConfig.account.phone && fromConfig.account.code) {
+        let regPhong = /^1[3456789]\d{9}$/;
+        // return regPhong.test(value)
+        let isphone = regPhong.test(fromConfig.account.phone);
+        console.log("isphone", isphone);
+
+        if (isphone) {
+          singnuptrue();
         }
       } else {
         Notify("请输入嗨嗨账号信息");
+      }
+    };
+    const singnuptrue = async () => {
+      try {
+        let option = {
+          code: fromConfig.account.code,
+          phone: fromConfig.account.phone,
+        };
+        console.log("option", option);
+        const res = await api.pay.login(option);
+
+        console.log("res", res);
+        const { code, data } = res;
+        if (code == 0) {
+          proxy.$store.commit("SET_USER_INFO", data);
+          let testuse = JSON.stringify(data);
+          sessionStorage.setItem("userinfo", testuse);
+          console.log("data", proxy.$store.state.userinfo);
+
+          router.push({
+            path: "/core",
+          });
+        }
+      } catch (err) {
+        console.log("err", err);
       }
     };
     const clickwxpay = async () => {
@@ -202,6 +217,39 @@ export default {
       console.log("submit", values);
     };
 
+    const getcode = async () => {
+      try {
+        let option = {
+          phone: fromConfig.account.phone,
+        };
+        console.log("option", option);
+        const res = await api.pay.TencentSendSms(option);
+
+        console.log("TencentSendSms", res);
+        const { code, data } = res;
+        if (code == 0) {
+          fromConfig.numtime = 60;
+          fromConfig.codetimeout = false;
+          setTimeout(() => {
+            fromConfig.codetimeout = true;
+          }, 3000);
+          getTime();
+          console.log("data", data);
+        }
+      } catch (err) {
+        console.log("err", err);
+      }
+    };
+
+    const getTime = () => {
+      let interval = setInterval(() => {
+        fromConfig.numtime--;
+        if (fromConfig.numtime == 0) {
+          clearInterval(interval);
+        }
+      }, 1000);
+    };
+
     return {
       ...from,
       tolist,
@@ -211,6 +259,7 @@ export default {
       getchange,
       changepayType,
       onSubmit,
+      getcode,
     };
   },
 };
@@ -278,6 +327,17 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
+    .signup_btn {
+      color: #e95583;
+    }
+    .logo_haihai {
+      margin-top: 80px;
+
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+    }
+
     .pay-text {
       margin-top: 20px;
       color: #3c251c;

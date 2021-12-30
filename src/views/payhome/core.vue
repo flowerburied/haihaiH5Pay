@@ -6,7 +6,7 @@
       </div>
 
       <div class="field-box-tab" @click="goback">
-        <div class="field-tab-text">申请提现</div>
+        <div class="field-tab-text">嗨嗨充值中心</div>
         <!-- <img class="field-tab-img" src="../../assets/back.png" /> -->
       </div>
 
