@@ -11,64 +11,65 @@
       </div>
 
       <div class="home-box-con">
-        <div class="pay-text">选择支付方式</div>
-        <div class="pay-box">
-          <div class="pay-box-input" @click="changepayType">
-            <div class="pay-left">
-              <img class="pay-img" src="../../assets/pay/01.png" />
-              <div class="pay-text1">支付宝</div>
-            </div>
-            <div class="pay-right">
-              <img v-if="!ispayType" class="pay-img-quan" src="../../assets/pay/04.png" />
-              <img v-if="ispayType" class="pay-img-quan" src="../../assets/pay/05.png" />
+        <div class="core_first">
+          <div class="core_first_left">
+            <img class="first_left_img" :src="$store.state.userinfo.head" />
+
+            <div class="first_left_text">
+              {{ $store.state.userinfo.nickname }} ID: {{ $store.state.userinfo.randId }}
             </div>
           </div>
-          <div class="pay-box-input" @click="changepayType">
-            <div class="pay-left">
-              <img class="pay-img" src="../../assets/pay/02.png" />
-              <div class="pay-text1">微信</div>
-            </div>
-            <div class="pay-right">
-              <img v-if="ispayType" class="pay-img-quan" src="../../assets/pay/04.png" />
-              <img v-if="!ispayType" class="pay-img-quan" src="../../assets/pay/05.png" />
+
+          <div class="core_first_right" @click="outlogin">退出</div>
+        </div>
+
+        <div class="core_second">
+          <div class="core_second_title">我的收益</div>
+
+          <div class="core_second_box">
+            <div class="second_box_text">当前财产：</div>
+
+            <div class="second_box_box">
+              <div class="box_box_left">
+                <img class="box_left_img" src="../../assets/pay/08.png" />
+                <div class="box_left_money">
+                  {{ $store.state.userinfo.integral || 0 }}
+                </div>
+              </div>
+              <div class="box_box_left">
+                <img class="box_left_img" src="../../assets/pay/07.png" />
+                <div class="box_left_money">{{ $store.state.userinfo.balance || 0 }}</div>
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="pay-text">可提现金额  2987.62</div>
-        <div class="pay-box" style="height:44px;">
-          <div class="pay-box-input" >
-            <van-field
-              :rules="[{ required: true, message: '提现金额需为10的倍数' }]"
-              v-model="account.id"
-              label-width="56"
-              placeholder="提现金额需为10的倍数"
-              label="提现金额"
-            />
+        <div class="core_third">
+          <img class="core_third_bg" src="../../assets/pay/12.png" />
+          <div class="core_third_box">
+            <div class="third_box_box" @click="topayWithdrawal">
+              <div class="box_box_left">可提取佣金（人民币）</div>
+              <div class="box_box_right">申请佣金</div>
+            </div>
+            <div class="third_box_num">{{ $store.state.userinfo.integral / 100 }}</div>
           </div>
         </div>
-
-        <div class="pay-text">提现账号</div>
-        <div class="pay-box">
-          <div class="pay-box-input">
-            <van-field
-              :rules="[{ required: true, message: '支付宝账号' }]"
-              v-model="account.id"
-              label-width="56"
-              placeholder="支付宝账号"
-            />
+        <!-- <div class="core_fourth">
+          <div class="core_fourth_box" v-for="i of 4" :key="i">
+            <div class="fourth_box_text">本周收益（元）</div>
+            <div class="fourth_box_money">本周收益（元）</div>
           </div>
-          <div class="pay-box-input">
-            <van-field
-              :rules="[{ required: true, message: '收款人真实姓名' }]"
-              v-model="account.name"
-              label-width="56"
-              placeholder="收款人真实姓名"
-            />
+        </div> -->
+
+        <div class="core_fifth">
+          <div class="core_fifth_box" v-for="(item, indfif) in fifthList" :key="indfif">
+            <div class="fifth_box_left">
+              <img class="box_left_img" :src="item.img" />
+              <div class="box_left_text">{{ item.text }}</div>
+            </div>
+            <img class="fifth_box_right" src="../../assets/pay/13.png" />
           </div>
         </div>
-
-        <div class="pay-btn" @click="clickpay">确认申请</div>
 
         <!-- end -->
       </div>
@@ -96,11 +97,10 @@ export default {
       },
 
       ispayType: false,
-      changemoney: [
-        { num: 0.01, money: "￥6.00" },
-        { num: 600, money: "￥6.00" },
-        { num: 600, money: "￥6.00" },
-        { num: 600, money: "￥6.00" },
+      fifthList: [
+        { img: require("@/assets/pay/09.png"), text: "兑换金币" },
+        { img: require("@/assets/pay/10.png"), text: "佣金记录" },
+        { img: require("@/assets/pay/11.png"), text: "绑定银行卡" },
       ],
     });
     const from = toRefs(fromConfig);
@@ -108,6 +108,14 @@ export default {
     const { proxy } = getCurrentInstance();
     console.log("proxy", proxy);
     const router = useRouter();
+
+    // payWithdrawal
+
+    const topayWithdrawal = () => {
+      router.push({
+        path: "/payWithdrawal",
+      });
+    };
 
     const changepayType = () => {
       fromConfig.ispayType = !fromConfig.ispayType;
@@ -201,6 +209,12 @@ export default {
     const onSubmit = (values) => {
       console.log("submit", values);
     };
+    const outlogin = () => {
+      proxy.$store.commit("SET_USER_INFO", null);
+      router.push({
+        path: "/signup",
+      });
+    };
 
     return {
       ...from,
@@ -211,6 +225,8 @@ export default {
       getchange,
       changepayType,
       onSubmit,
+      topayWithdrawal,
+      outlogin,
     };
   },
 };
@@ -278,159 +294,208 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
-    .pay-text {
-      margin-top: 20px;
-      color: #3c251c;
+    .core_fifth {
+      margin-top: 8px;
       width: 345px;
-      font-size: 14px;
-      line-height: 14px;
+      height: 134px;
+      background: #ffffff;
+      border-radius: 4px;
       display: flex;
-      flex-direction: row;
-    }
-    .pay-textwx {
-      margin-top: 20px;
-      color: #999999;
-      width: 345px;
-      font-size: 12px;
-      line-height: 12px;
-      display: flex;
-      flex-direction: row;
-    }
-    .pay-btn {
-      margin-top: 44px;
-      padding: 13px 42px;
-      border-radius: 20px;
-      font-size: 14px;
-      line-height: 14px;
-      color: #ffffff;
-      background: #e95583;
-    }
-    .pay_agreement {
-      margin-top: 20px;
-      color: #3c251c;
-      width: 345px;
-      font-size: 14px;
-      line-height: 14px;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      .pay_agreement_quan {
-        width: 10px;
-        height: 10px;
-      }
-      .pay_agreement_text {
-        margin-left: 5px;
-      }
-      .pay_agreement_link {
-        color: #027aff;
-        text-decoration: underline;
-      }
-    }
-    .pay-change-money {
-      width: 368px;
-      margin: -5px 0 0 -22px;
-      display: flex;
-      flex-wrap: wrap;
-
-      .money_border {
-        border: 1px solid #e4b569;
-      }
-      .change-money-box {
-        margin: 10px 0 0 22px;
-        position: relative;
-        width: 100px;
-        height: 70px;
-        background: #ffffff;
-        border-radius: 4px;
-
-        .money-box-con {
-          width: 100px;
-          height: 70px;
+      flex-direction: column;
+      .core_fifth_box {
+        width: 345px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-direction: row;
+        .fifth_box_right {
+          margin-right: 12px;
+          width: 7px;
+          height: 7px;
+        }
+        .fifth_box_left {
           display: flex;
-          flex-direction: column;
-          justify-content: center;
-          .box-con-money {
-            margin-top: 10px;
-            font-size: 10px;
-            line-height: 10px;
-            color: #3c251c;
+          align-items: center;
+          flex-direction: row;
+          .box_left_img {
+            width: 20px;
+            height: 20px;
+            margin-left: 13px;
           }
-          .box-con-value1 {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
-            .con-value-img {
-              width: 15px;
-              height: 15px;
-            }
-            .con-value-text {
-              display: inline-block;
-              font-size: 14px;
-              line-height: 14px;
-              margin-left: 12px;
-              color: #fdc72f;
-            }
+          .box_left_text {
+            font-size: 14px;
+            line-height: 14px;
+            margin-left: 7px;
           }
-        }
-        .money-box-isget {
-          width: 20px;
-          height: 20px;
-          position: absolute;
-          bottom: 0;
-          right: 0;
         }
       }
     }
-
-    .pay-box {
-      margin-top: 5px;
+    .core_fourth {
+      margin-top: 8px;
+      width: 345px;
+      height: 115px;
+      background: #ffffff;
+      border-radius: 4px;
+      display: flex;
+      // flex-direction: column;
+      // position: relative;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      .core_fourth_box {
+        margin-top: 15px;
+        width: 172px;
+        display: flex;
+        flex-direction: column;
+        color: #3c251c;
+        .fourth_box_text {
+          font-size: 10px;
+          line-height: 10px;
+        }
+        .fourth_box_money {
+          font-size: 14px;
+          line-height: 14px;
+          margin-top: 7px;
+        }
+      }
+    }
+    .core_third {
+      margin-top: 8px;
+      width: 345px;
+      height: 125px;
+      background: #ffffff;
+      border-radius: 4px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      .core_third_bg {
+        width: 345px;
+        height: 125px;
+        position: absolute;
+      }
+      .core_third_box {
+        position: absolute;
+        width: 345px;
+        height: 125px;
+        display: flex;
+        flex-direction: column;
+        // justify-content: space-between;
+        .third_box_num {
+          display: block;
+          margin: 27px 0 0 18px;
+          font-size: 40px;
+          line-height: 40px;
+          color: #f1b797;
+          display: flex;
+        }
+        .third_box_box {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          width: 100%;
+          margin-top: 11px;
+          .box_box_left {
+            margin-left: 15px;
+            font-size: 12px;
+            line-height: 12px;
+            color: #f1b797;
+          }
+          .box_box_right {
+            margin-right: 14px;
+            font-size: 11px;
+            line-height: 11px;
+            padding: 7px 9px;
+            color: #ffffff;
+            background: #8a6b36;
+            border-radius: 12px;
+          }
+        }
+      }
+    }
+    .core_second {
+      margin-top: 8px;
       width: 345px;
       height: 100px;
       background: #ffffff;
       border-radius: 4px;
       display: flex;
       flex-direction: column;
-
-      .pay-box-input {
-        width: 345px;
-        height: 50px;
+      // justify-content: center;
+      .core_second_title {
+        font-size: 14px;
+        line-height: 14px;
+        margin-top: 16px;
+        color: #3c251c;
+      }
+      .core_second_box {
+        margin-top: 41px;
+        width: 100%;
         display: flex;
-        align-items: center;
         flex-direction: row;
-        justify-content: space-between;
-        .pay-left {
+        align-items: center;
+        .second_box_text {
+          width: 95px;
+          margin-left: 15px;
+
+          font-size: 14px;
+          line-height: 14px;
+          color: #3c251c;
+        }
+        .second_box_box {
           width: 100%;
           display: flex;
           flex-direction: row;
-          align-items: center;
-          // justify-content: center;
-          margin-left: 17px;
-          .pay-img {
-            width: 29px;
-            height: 29px;
-          }
-          .pay-text1 {
-            font-size: 14px;
-            line-height: 14px;
-            color: #3c251c;
-            margin-left: 7px;
-          }
-        }
-        .pay-right {
-          width: 10px;
-          height: 10px;
-          margin-right: 19px;
-          .pay-img-quan {
-            width: 10px;
-            height: 10px;
+          .box_box_left {
+            display: flex;
+            flex: 1;
+            // background: chartreuse;
+            flex-direction: row;
+            align-items: center;
+            .box_left_img {
+              width: 15px;
+              height: 15px;
+            }
+            .box_left_money {
+              margin-left: 13px;
+              font-size: 14px;
+              line-height: 14px;
+              color: #3c251c;
+            }
           }
         }
+      }
+    }
 
-        .box-input-text {
-          display: flex;
-          flex-direction: row;
-          margin-left: 18px;
+    .core_first {
+      width: 345px;
+      height: 70px;
+      border-radius: 7px;
+      background: #ffffff;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      .core_first_right {
+        border-radius: 5px;
+        margin-right: 10px;
+        padding: 7px 10px;
+        font-size: 11px;
+        line-height: 11px;
+        color: #ffffff;
+        background: linear-gradient(90deg, #b050ed, #7c50ed);
+      }
+      .core_first_left {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        .first_left_img {
+          margin-left: 10px;
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+        }
+        .first_left_text {
+          margin-left: 10px;
           font-size: 14px;
           line-height: 14px;
           color: #3c251c;

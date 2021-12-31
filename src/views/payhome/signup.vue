@@ -120,17 +120,26 @@ export default {
       router.go(-1);
     };
     const clickpay = async () => {
-      if (fromConfig.account.phone && fromConfig.account.code) {
-        let regPhong = /^1[3456789]\d{9}$/;
-        // return regPhong.test(value)
-        let isphone = regPhong.test(fromConfig.account.phone);
-        console.log("isphone", isphone);
-
-        if (isphone) {
-          singnuptrue();
-        }
+      let getlocal = localStorage.getItem("userinfo");
+      if (getlocal) {
+        let loacll = JSON.parse(getlocal);
+        proxy.$store.commit("SET_USER_INFO", loacll);
+        router.push({
+          path: "/core",
+        });
       } else {
-        Notify("请输入嗨嗨账号信息");
+        if (fromConfig.account.phone && fromConfig.account.code) {
+          let regPhong = /^1[3456789]\d{9}$/;
+          // return regPhong.test(value)
+          let isphone = regPhong.test(fromConfig.account.phone);
+          console.log("isphone", isphone);
+
+          if (isphone) {
+            singnuptrue();
+          }
+        } else {
+          Notify("请输入嗨嗨账号信息");
+        }
       }
     };
     const singnuptrue = async () => {
@@ -146,8 +155,9 @@ export default {
         const { code, data } = res;
         if (code == 0) {
           proxy.$store.commit("SET_USER_INFO", data);
-          let testuse = JSON.stringify(data);
-          sessionStorage.setItem("userinfo", testuse);
+          // let testuse = JSON.stringify(data);
+          // sessionStorage.setItem("userinfo", testuse);
+          // localStorage.setItem("userinfo", testuse);
           console.log("data", proxy.$store.state.userinfo);
 
           router.push({

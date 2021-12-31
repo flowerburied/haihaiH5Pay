@@ -1,6 +1,22 @@
 import axios from '../../utils/request.js'
 
 let pay = {
+    //提现
+    WithdrawaLog(data) {
+        return axios({
+            url: '/Withdrawal/WithdrawaLog',
+            method: 'post',
+            data: data
+        })
+    },
+    //提现
+    ApplyWithdrawa(data) {
+        return axios({
+            url: '/Withdrawal/ApplyWithdrawa',
+            method: 'post',
+            data: data
+        })
+    },
     //提现验证
     login(data) {
         return axios({

@@ -14,6 +14,12 @@ const routes = [{
             import ("@/views/payhome/signup.vue"),
     },
     {
+        path: "/record",
+        name: "record",
+        component: () =>
+            import ("@/views/payhome/record.vue"),
+    },
+    {
         path: "/core",
         name: "core",
         component: () =>

@@ -5,9 +5,10 @@
         <img class="field-box-img" src="../../assets/11.png" />
       </div>
 
-      <div class="field-box-tab" @click="goback">
+      <div class="field-box-tab">
         <div class="field-tab-text">申请提现</div>
-        <!-- <img class="field-tab-img" src="../../assets/back.png" /> -->
+        <img @click="goback" class="field-tab-img" src="../../assets/back.png" />
+        <div class="pay_jl" @click="toRecord">提现记录</div>
       </div>
 
       <div class="home-box-con">
@@ -35,12 +36,12 @@
           </div>
         </div>
 
-        <div class="pay-text">可提现金额  2987.62</div>
-        <div class="pay-box" style="height:44px;">
-          <div class="pay-box-input" >
+        <div class="pay-text">可提现金额 {{ $store.state.userinfo.integral / 100 }}</div>
+        <div class="pay-box" style="height: 44px">
+          <div class="pay-box-input">
             <van-field
               :rules="[{ required: true, message: '提现金额需为10的倍数' }]"
-              v-model="account.id"
+              v-model="account.money"
               label-width="56"
               placeholder="提现金额需为10的倍数"
               label="提现金额"
@@ -48,12 +49,12 @@
           </div>
         </div>
 
-        <div class="pay-text">提现账号</div>
-        <div class="pay-box">
+        <div class="pay-text" v-if="!ispayType">提现账号</div>
+        <div class="pay-box" v-if="!ispayType">
           <div class="pay-box-input">
             <van-field
               :rules="[{ required: true, message: '支付宝账号' }]"
-              v-model="account.id"
+              v-model="account.name"
               label-width="56"
               placeholder="支付宝账号"
             />
@@ -61,7 +62,7 @@
           <div class="pay-box-input">
             <van-field
               :rules="[{ required: true, message: '收款人真实姓名' }]"
-              v-model="account.name"
+              v-model="account.accountid"
               label-width="56"
               placeholder="收款人真实姓名"
             />
@@ -91,8 +92,9 @@ export default {
       count: 0,
       isget: 0,
       account: {
-        id: "51976",
+        money: "",
         name: "",
+        accountid: "",
       },
 
       ispayType: false,
@@ -110,6 +112,8 @@ export default {
     const router = useRouter();
 
     const changepayType = () => {
+      fromConfig.account.accountid = "";
+      fromConfig.account.name = "";
       fromConfig.ispayType = !fromConfig.ispayType;
     };
 
@@ -127,31 +131,56 @@ export default {
         },
       });
     };
+    const toRecord = () => {
+      router.push({
+        path: "/record",
+      });
+    };
 
     const goback = () => {
       console.log("fabhui");
       router.go(-1);
     };
     const clickpay = async () => {
-      if (fromConfig.account.id && fromConfig.account.name) {
-        if (fromConfig.ispayType) {
-          clickwxpay();
+      if (fromConfig.ispayType) {
+        if (fromConfig.account.money) {
+          // clickwxpay();
+          Notify("微信提现暂未开通");
         } else {
-          clickalipay();
+          Notify("请填写完整");
         }
       } else {
-        Notify("请输入嗨嗨账号信息");
+        if (
+          fromConfig.account.money &&
+          fromConfig.account.name &&
+          fromConfig.account.accountid
+        ) {
+          clickalipay();
+        } else {
+          Notify("请填写完整");
+        }
       }
+      // if (fromConfig.account.id && fromConfig.account.name) {
+      //   if (fromConfig.ispayType) {
+      //     clickwxpay();
+      //   } else {
+      //     clickalipay();
+      //   }
+      // } else {
+      //   Notify("请输入嗨嗨账号信息");
+      // }
     };
     const clickwxpay = async () => {
       try {
         let option = {
-          price: fromConfig.changemoney[fromConfig.isget].num,
-          type: "Android",
-          rand_id: fromConfig.account.id,
+          uid: proxy.$store.state.userinfo.userId,
+          money: fromConfig.account.money,
+          type: 2,
+          name: fromConfig.account.name,
+          account: fromConfig.account.accountid,
         };
         console.log("option", option);
-        const res = await api.pay.H5WxPay(option);
+        const res = await api.pay.ApplyWithdrawa(option);
 
         console.log("res", res);
         const { code, data } = res;
@@ -165,34 +194,26 @@ export default {
     const clickalipay = async () => {
       try {
         let option = {
-          price: fromConfig.changemoney[fromConfig.isget].num,
-          type: "Android",
-          rand_id: fromConfig.account.id,
+          uid: proxy.$store.state.userinfo.userId,
+          money: fromConfig.account.money * 100,
+          type: 1,
+          name: fromConfig.account.name,
+          account: fromConfig.account.accountid,
         };
         console.log("option", option);
-        const res = await api.pay.H5AliPay(option);
+        const res = await api.pay.ApplyWithdrawa(option);
 
         console.log("res", res);
         const { code, data } = res;
         if (code == 0) {
-          console.log("data", data);
+          // console.log("data", data);
+          Notify({ type: "success", message: "申请提现成功" });
 
-          let routeData = proxy.$router.resolve({
-            path: "/aliPay",
-            query: {
-              htmlData: data,
-            },
-          });
-
-          window.open(routeData.href, "_ blank");
-          // const div = document.createElement("div");
-          // div.innerHTML = `<form id="alipaysubmit" name="alipaysubmit"
-          //                  :action="${data}"
-          //                  method="POST" ></form>`;
-          // document.body.appendChild(div);
-
-          // console.log("document.getElememi", document.getElementById("alipaysubmit"));
-          // document.getElementById("alipaysubmit").submit();
+          setTimeout(() => {
+            router.go(-1);
+          }, 2000);
+        } else {
+          Notify({ type: "danger", message: "申请提现失败" });
         }
       } catch (err) {
         console.log("err", err);
@@ -211,6 +232,7 @@ export default {
       getchange,
       changepayType,
       onSubmit,
+      toRecord,
     };
   },
 };
@@ -244,6 +266,15 @@ export default {
     display: flex;
     flex-direction: row;
     align-items: center;
+    .pay_jl {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      font-size: 14px;
+      line-height: 14px;
+      text-decoration: underline;
+      color: #027aff;
+    }
     .field-tab-img {
       position: absolute;
       top: 15px;
