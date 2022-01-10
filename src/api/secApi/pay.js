@@ -1,6 +1,14 @@
 import axios from '../../utils/request.js'
 
 let pay = {
+    //H5 rand_id获取用户信息
+    RandIdGetUserInfo(data) {
+        return axios({
+            url: '/User/RandIdGetUserInfo',
+            method: 'post',
+            data: data
+        })
+    },
     //提现
     WithdrawaLog(data) {
         return axios({

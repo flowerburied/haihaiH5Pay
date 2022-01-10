@@ -15,6 +15,7 @@
         <div class="pay-box">
           <div class="pay-box-input">
             <van-field
+              @update:model-value="update"
               :rules="[{ required: true, message: '请填写用户名' }]"
               v-model="account.id"
               label-width="56"
@@ -23,7 +24,26 @@
             />
           </div>
           <div class="pay-box-input">
+            <!-- <van-field
+              label-width="56"
+              v-model="result"
+              is-link
+              readonly
+              name="picker"
+              label="昵 称："
+              placeholder="点击选择昵称"
+              @click="showPicker = true"
+            />
+            <van-popup v-model:show="showPicker" position="bottom">
+              <van-picker
+                :columns="columns"
+                @confirm="onConfirm"
+                @cancel="showPicker = false"
+              />
+            </van-popup> -->
+
             <van-field
+              disabled
               :rules="[{ required: true, message: '请填写用户名' }]"
               v-model="account.name"
               label-width="56"
@@ -72,7 +92,7 @@
                 <div class="con-value-text">{{ item.num }}</div>
               </div>
 
-              <div class="box-con-money">{{item.money}}</div>
+              <div class="box-con-money">{{ item.money }}</div>
             </div>
 
             <img
@@ -114,10 +134,9 @@ export default {
       count: 0,
       isget: 0,
       account: {
-        id: "51976",
+        id: "",
         name: "",
       },
-
       ispayType: false,
       changemoney: [
         { num: 600, money: "￥6.00" },
@@ -125,6 +144,9 @@ export default {
         { num: 6800, money: "￥68.00" },
         { num: 11800, money: "￥118.00" },
       ],
+      result: "",
+      showPicker: false,
+      columns: ["杭州", "宁波", "温州", "嘉兴", "湖州"],
     });
     const from = toRefs(fromConfig);
     // proxy相当于vue2的this对象
@@ -201,7 +223,7 @@ export default {
     const clickalipay = async () => {
       try {
         let option = {
-          price: fromConfig.changemoney[fromConfig.isget].num/100,
+          price: fromConfig.changemoney[fromConfig.isget].num / 100,
           type: "Android",
           rand_id: fromConfig.account.id,
         };
@@ -238,6 +260,41 @@ export default {
       console.log("submit", values);
     };
 
+    const getusername = async (val) => {
+      try {
+        let option = {
+          rand_id: val,
+        };
+        console.log("option", option);
+        const res = await api.pay.RandIdGetUserInfo(option);
+
+        console.log("res", res);
+        const { code, data } = res;
+        if (code == 0) {
+          console.log("data", data);
+          if (data) {
+            fromConfig.account.name = data.nickname;
+          }else{
+              fromConfig.account.name =''
+          }
+        }
+      } catch (err) {
+        console.log("err", err);
+      }
+    };
+
+    const onConfirm = (value) => {
+      fromConfig.result = value;
+      fromConfig.showPicker = false;
+    };
+
+    const update = (val) => {
+      console.log("val", val);
+      if (val.length > 2) {
+        getusername(val);
+      }
+    };
+
     return {
       ...from,
       tolist,
@@ -247,6 +304,8 @@ export default {
       getchange,
       changepayType,
       onSubmit,
+      onConfirm,
+      update,
     };
   },
 };
