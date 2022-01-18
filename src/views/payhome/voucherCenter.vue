@@ -207,14 +207,16 @@ export default {
           let mergeurl =
             data.mweb_url + "&redirect_url=http://h5pay.haihaixingqiu.com/#/";
           console.log("mergeurl", mergeurl);
-          let routeData = proxy.$router.resolve({
-            path: "/aliPay",
-            query: {
-              htmlData: mergeurl,
-            },
-          });
 
-          window.open(routeData.href, "_ blank");
+           window.location.href = mergeurl;
+          // let routeData = proxy.$router.resolve({
+          //   path: "/aliPay",
+          //   query: {
+          //     htmlData: mergeurl,
+          //   },
+          // });
+
+          // window.open(routeData.href, "_ blank");
         }
       } catch (err) {
         console.log("err", err);
@@ -234,15 +236,19 @@ export default {
         const { code, data } = res;
         if (code == 0) {
           console.log("data", data);
+ window.location.href = data;
 
-          let routeData = proxy.$router.resolve({
-            path: "/aliPay",
-            query: {
-              htmlData: data,
-            },
-          });
 
-          window.open(routeData.href, "_ blank");
+          // let routeData = proxy.$router.resolve({
+          //   path: "/aliPay",
+          //   query: {
+          //     htmlData: data,
+          //   },
+          // });
+
+          // window.open(routeData.href, "_ blank");
+
+
           // const div = document.createElement("div");
           // div.innerHTML = `<form id="alipaysubmit" name="alipaysubmit"
           //                  :action="${data}"
