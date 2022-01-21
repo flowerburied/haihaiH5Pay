@@ -2,7 +2,7 @@
   <div class="field">
     <div class="field-box">
       <div class="field-box-bg">
-        <img class="field-box-img" src="../../assets/11.png" />
+        <!-- <img class="field-box-img" src="../../assets/11.png" /> -->
       </div>
 
       <div class="field-box-tab" @click="goback">
@@ -18,7 +18,7 @@
               @update:model-value="update"
               :rules="[{ required: true, message: '请填写用户名' }]"
               v-model="account.id"
-              label-width="56"
+              label-width="60"
               placeholder="请输入ID"
               label="嗨嗨ID："
             />
@@ -321,6 +321,7 @@ export default {
 .field {
   width: 100%;
   // height: 100vh;
+  // background: #c8d6e5;
   .field-box {
     position: relative;
   }
@@ -379,6 +380,7 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
+      background: #f1f2f6;
     .pay-text {
       margin-top: 20px;
       color: #3c251c;

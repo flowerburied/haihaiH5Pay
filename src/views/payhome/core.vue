@@ -2,7 +2,7 @@
   <div class="field">
     <div class="field-box">
       <div class="field-box-bg">
-        <img class="field-box-img" src="../../assets/11.png" />
+        <!-- <img class="field-box-img" src="../../assets/11.png" /> -->
       </div>
 
       <div class="field-box-tab" @click="goback">
