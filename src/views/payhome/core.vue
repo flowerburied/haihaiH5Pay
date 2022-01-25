@@ -6,7 +6,7 @@
       </div>
 
       <div class="field-box-tab" @click="goback">
-        <div class="field-tab-text">嗨嗨充值中心</div>
+        <div class="field-tab-text">啵咿充值中心</div>
         <!-- <img class="field-tab-img" src="../../assets/back.png" /> -->
       </div>
 
@@ -148,7 +148,7 @@ export default {
           clickalipay();
         }
       } else {
-        Notify("请输入嗨嗨账号信息");
+        Notify("请输入啵咿账号信息");
       }
     };
     const clickwxpay = async () => {

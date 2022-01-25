@@ -6,12 +6,12 @@
       </div>
 
       <div class="field-box-tab" @click="goback">
-        <div class="field-tab-text">嗨嗨充值中心</div>
+        <div class="field-tab-text">啵咿充值中心</div>
         <!-- <img class="field-tab-img" src="../../assets/back.png" /> -->
       </div>
 
       <div class="home-box-con">
-        <div class="pay-text">请输入嗨嗨账号</div>
+        <div class="pay-text">请输入啵咿账号</div>
         <div class="pay-box">
           <div class="pay-box-input">
             <van-field
@@ -20,7 +20,7 @@
               v-model="account.id"
               label-width="60"
               placeholder="请输入ID"
-              label="嗨嗨ID："
+              label="啵咿ID："
             />
           </div>
           <div class="pay-box-input">
@@ -78,28 +78,51 @@
         <div class="pay-text">选择充值面额</div>
 
         <div class="pay-change-money">
-          <div
-            class="change-money-box"
-            @click="getchange(index)"
-            v-for="(item, index) in changemoney"
-            :key="index"
-            :class="[isget == index ? 'money_border' : '']"
-          >
-            <div class="money-box-con">
-              <div class="box-con-value1">
-                <img class="con-value-img" src="../../assets/pay/04.png" />
-                <!-- <p class="con-value-text"> {{ item.num }}</p> -->
-                <div class="con-value-text">{{ item.num }}</div>
+          <div v-for="(item, index) in changemoney" :key="index">
+            <div
+              v-if="index < 4 && !ispayType"
+              class="change-money-box"
+              @click="getchange(index)"
+              :class="[isget == index ? 'money_border' : '']"
+            >
+              <div class="money-box-con">
+                <div class="box-con-value1">
+                  <img class="con-value-img" src="../../assets/pay/04.png" />
+                  <!-- <p class="con-value-text"> {{ item.num }}</p> -->
+                  <div class="con-value-text">{{ item.num }}</div>
+                </div>
+
+                <div class="box-con-money">{{ item.money }}</div>
               </div>
 
-              <div class="box-con-money">{{ item.money }}</div>
+              <img
+                v-if="isget == index"
+                class="money-box-isget"
+                src="../../assets/pay/03.png"
+              />
             </div>
+            <div
+              v-if="ispayType"
+              class="change-money-box"
+              @click="getchange(index)"
+              :class="[isget == index ? 'money_border' : '']"
+            >
+              <div class="money-box-con">
+                <div class="box-con-value1">
+                  <img class="con-value-img" src="../../assets/pay/04.png" />
+                  <!-- <p class="con-value-text"> {{ item.num }}</p> -->
+                  <div class="con-value-text">{{ item.num }}</div>
+                </div>
 
-            <img
-              v-if="isget == index"
-              class="money-box-isget"
-              src="../../assets/pay/03.png"
-            />
+                <div class="box-con-money">{{ item.money }}</div>
+              </div>
+
+              <img
+                v-if="isget == index"
+                class="money-box-isget"
+                src="../../assets/pay/03.png"
+              />
+            </div>
           </div>
         </div>
         <div class="pay-textwx">*如有疑问可添加客服微信：haihaiyuyinlefu</div>
@@ -143,6 +166,14 @@ export default {
         { num: 3000, money: "￥30.00" },
         { num: 6800, money: "￥68.00" },
         { num: 11800, money: "￥118.00" },
+        { num: 28800, money: "￥288.00" },
+        { num: 48800, money: "￥488.00" },
+        { num: 68800, money: "￥688.00" },
+        { num: 98800, money: "￥988.00" },
+        { num: 200000, money: "￥2000.00" },
+        { num: 300000, money: "￥3000.00" },
+        { num: 500000, money: "￥5000.00" },
+        { num: 1000000, money: "￥10000.00" },
       ],
       result: "",
       showPicker: false,
@@ -185,7 +216,7 @@ export default {
           clickalipay();
         }
       } else {
-        Notify("请输入嗨嗨账号信息");
+        Notify("请输入啵咿账号信息");
       }
     };
     const clickwxpay = async () => {
@@ -208,7 +239,7 @@ export default {
             data.mweb_url + "&redirect_url=http://h5pay.haihaixingqiu.com/#/";
           console.log("mergeurl", mergeurl);
 
-           window.location.href = mergeurl;
+          window.location.href = mergeurl;
           // let routeData = proxy.$router.resolve({
           //   path: "/aliPay",
           //   query: {
@@ -236,8 +267,7 @@ export default {
         const { code, data } = res;
         if (code == 0) {
           console.log("data", data);
- window.location.href = data;
-
+          window.location.href = data;
 
           // let routeData = proxy.$router.resolve({
           //   path: "/aliPay",
@@ -247,7 +277,6 @@ export default {
           // });
 
           // window.open(routeData.href, "_ blank");
-
 
           // const div = document.createElement("div");
           // div.innerHTML = `<form id="alipaysubmit" name="alipaysubmit"
@@ -280,8 +309,8 @@ export default {
           console.log("data", data);
           if (data) {
             fromConfig.account.name = data.nickname;
-          }else{
-              fromConfig.account.name =''
+          } else {
+            fromConfig.account.name = "";
           }
         }
       } catch (err) {
@@ -380,7 +409,7 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
-      background: #f1f2f6;
+    background: #f1f2f6;
     .pay-text {
       margin-top: 20px;
       color: #3c251c;

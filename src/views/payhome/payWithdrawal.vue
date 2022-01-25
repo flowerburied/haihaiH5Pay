@@ -167,7 +167,7 @@ export default {
       //     clickalipay();
       //   }
       // } else {
-      //   Notify("请输入嗨嗨账号信息");
+      //   Notify("请输入啵咿账号信息");
       // }
     };
     const clickwxpay = async () => {
