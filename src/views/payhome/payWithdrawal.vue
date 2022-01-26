@@ -43,7 +43,7 @@
               :rules="[{ required: true, message: '提现金额需为10的倍数' }]"
               v-model="account.money"
               label-width="56"
-              placeholder="提现金额需为10的倍数"
+              placeholder="提现金额最小为一百"
               label="提现金额"
             />
           </div>

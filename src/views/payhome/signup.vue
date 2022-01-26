@@ -242,7 +242,7 @@ export default {
           fromConfig.codetimeout = false;
           setTimeout(() => {
             fromConfig.codetimeout = true;
-          }, 3000);
+          }, 60000);
           getTime();
           console.log("data", data);
         }
