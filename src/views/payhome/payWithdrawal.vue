@@ -204,7 +204,7 @@ export default {
         const res = await api.pay.ApplyWithdrawa(option);
 
         console.log("res", res);
-        const { code, data } = res;
+        const { code, data,message } = res;
         if (code == 0) {
           // console.log("data", data);
           Notify({ type: "success", message: "申请提现成功" });
@@ -213,7 +213,7 @@ export default {
             router.go(-1);
           }, 2000);
         } else {
-          Notify({ type: "danger", message: "申请提现失败" });
+          Notify({ type: "danger", message: message });
         }
       } catch (err) {
         console.log("err", err);
